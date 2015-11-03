@@ -384,9 +384,17 @@ endfunction
 
 function! AutoPairsSpace()
   let line = getline('.')
-  let prev_char = line[col('.')-2]
   let cmd = ''
-  let cur_char =line[col('.')-1]
+  let i = 0
+  while 1
+    let prev_char = line[col('.')-2-i]
+    let cur_char = line[col('.')-1+i]
+    if prev_char != ' ' || cur_char != ' '
+      break
+    endif
+    let i = i + 1
+  endwhile
+
   if has_key(g:AutoPairsParens, prev_char) && g:AutoPairsParens[prev_char] == cur_char
     let cmd = "\<SPACE>\<LEFT>"
   endif
@@ -523,7 +531,8 @@ function! AutoPairsTryInit()
         let old_cr = wrapper_name
       end
       " Always silent mapping
-      execute 'inoremap <script> <buffer> <silent> <CR> '.old_cr.'<SID>AutoPairsReturn'
+      " execute 'inoremap <script> <buffer> <silent> <CR> '.old_cr.'<SID>AutoPairsReturn'
+      execute 'inoremap <script> <buffer> <silent> <CR> <CR><C-R>=AutoPairsReturn()<CR>'
     end
   endif
   call AutoPairsInit()
